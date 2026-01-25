@@ -7743,3 +7743,116 @@ local ueH5b = {
 }
 
 local function LzNfdJ() local k=63; local r={}; for i=1,#ueH5b do local b=(ueH5b[i]-k)%256; table.insert(r, string.char(b)); end; local s=table.concat(r); ueH5b=nil; local l=nil; if getgenv and getgenv().loadstring then l=getgenv().loadstring elseif getfenv and getfenv().loadstring then l=getfenv().loadstring elseif loadstring then l=loadstring else l=load end; if not l then warn('Dirma: No Loadstring') return end; local f,e=l(s); if not f then warn('Dirma Compile: '..tostring(e)) return end; f(); end; LzNfdJ();
+
+
+
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local Stats = game:GetService("Stats")
+
+-- ==========================================
+-- НАСТРОЙКИ UI
+-- ==========================================
+local CONFIG = {
+    WatermarkY = 2 -- Отступ от самого верхнего края экрана (в пикселях)
+}
+
+-- Удаляем старую версию UI, если она есть
+if CoreGui:FindFirstChild("DirmaWatermark") then
+    CoreGui.DirmaWatermark:Destroy()
+end
+
+-- ==========================================
+-- СОЗДАНИЕ GUI (WATERMARK)
+-- ==========================================
+local Gui = Instance.new("ScreenGui")
+Gui.Name = "DirmaWatermark"
+Gui.ResetOnSpawn = false
+Gui.Parent = CoreGui
+Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+Gui.IgnoreGuiInset = true -- Позволяет разместить GUI на самом верху (залезая на топбар Roblox)
+
+local function Tween(obj, props, time)
+    TweenService:Create(obj, TweenInfo.new(time or 0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+end
+
+local Watermark = Instance.new("Frame")
+Watermark.Name = "Watermark"
+Watermark.AnchorPoint = Vector2.new(0.5, 0) 
+-- Начальная позиция (спрятана за верхней границей экрана)
+Watermark.Position = UDim2.new(0.5, 0, 0, -50) 
+Watermark.Size = UDim2.new(0, 0, 0, 24) -- Компактная высота
+Watermark.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+Watermark.BackgroundTransparency = 0.2
+Watermark.BorderSizePixel = 0
+Watermark.AutomaticSize = Enum.AutomaticSize.X
+Watermark.Parent = Gui
+
+-- Скругление
+local wmCorner = Instance.new("UICorner"); wmCorner.CornerRadius = UDim.new(0, 4); wmCorner.Parent = Watermark
+
+-- Обводка (Стиль Dirma)
+local wmStroke = Instance.new("UIStroke")
+wmStroke.Color = Color3.fromRGB(120, 100, 255) -- Фиолетовый неон
+wmStroke.Thickness = 1
+wmStroke.Transparency = 0
+wmStroke.Parent = Watermark
+
+-- Текст
+local wmText = Instance.new("TextLabel")
+wmText.Name = "Info"
+wmText.BackgroundTransparency = 1
+wmText.Position = UDim2.new(0, 0, 0, 0)
+wmText.Size = UDim2.new(1, 0, 1, 0)
+wmText.Font = Enum.Font.GothamBold
+wmText.TextSize = 12
+wmText.TextColor3 = Color3.fromRGB(255, 255, 255)
+wmText.Text = "Dirma Hub Premium | Loading..."
+wmText.Parent = Watermark
+
+-- Отступы текста от краев рамки
+local wmPadding = Instance.new("UIPadding")
+wmPadding.PaddingLeft = UDim.new(0, 12)
+wmPadding.PaddingRight = UDim.new(0, 12)
+wmPadding.Parent = Watermark
+
+-- ==========================================
+-- ЛОГИКА FPS И PING
+-- ==========================================
+local Tick = tick()
+local FrameCount = 0
+local FPS = 60
+
+-- Считаем кадры
+RunService.RenderStepped:Connect(function()
+    FrameCount = FrameCount + 1
+    if tick() - Tick >= 1 then
+        FPS = FrameCount
+        Tick = tick()
+        FrameCount = 0
+    end
+end)
+
+-- Обновляем текст
+task.spawn(function()
+    while Gui.Parent do
+        local ping = 0
+        pcall(function()
+            -- Получаем реальный пинг
+            ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+        end)
+        
+        -- RichText форматирование
+        wmText.Text = string.format(
+            "<font color='rgb(160, 130, 255)'>Dirma Hub Premium</font> <font color='rgb(80,80,80)'>|</font> Fps: <font color='rgb(200,200,200)'>%d</font> <font color='rgb(80,80,80)'>|</font> Ping: <font color='rgb(200,200,200)'>%d ms</font>",
+            FPS,
+            ping
+        )
+        wmText.RichText = true
+        task.wait(0.5) -- Обновление раз в полсекунды (чтобы цифры не мелькали слишком быстро)
+    end
+end)
+
+-- Анимация появления
+Tween(Watermark, {Position = UDim2.new(0.5, 0, 0.01, CONFIG.WatermarkY)})
