@@ -2672,6 +2672,8 @@ local function q3ebp4() local k=87; local r={}; for i=1,#uCPU3 do local b=(uCPU3
 
 
 
+
+
 GuiService = cloneref(game:GetService("GuiService"))
 while true do
     GuiService:ClearError()
