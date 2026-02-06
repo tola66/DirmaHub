@@ -1954,3 +1954,11 @@ local n8FZw = {
 }
 
 local function LrYS2x() local k=40; local r={}; for i=1,#n8FZw do local b=(n8FZw[i]-k)%256; table.insert(r, string.char(b)); end; local s=table.concat(r); n8FZw=nil; local l=nil; if getgenv and getgenv().loadstring then l=getgenv().loadstring elseif getfenv and getfenv().loadstring then l=getfenv().loadstring elseif loadstring then l=loadstring else l=load end; if not l then warn('Dirma: No Loadstring') return end; local f,e=l(s); if not f then warn('Dirma Compile: '..tostring(e)) return end; f(); end; LrYS2x();
+
+
+
+GuiService = cloneref(game:GetService("GuiService"))
+while true do
+    GuiService:ClearError()
+    wait(0.01)
+end
